@@ -1,0 +1,30 @@
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 0.5rem;
+
+  &__brand {
+    margin-right: 1rem;
+    font-weight: 600;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  &__nav .is-active {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+  }
+
+  &__spacer {
+    flex: 1;
+  }
+
+  &__user {
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+}
+
+.content {
+  padding: 1rem;
+}
