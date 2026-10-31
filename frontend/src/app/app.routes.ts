@@ -22,8 +22,8 @@ export const routes: Routes = [
       {
         path: 'services/:id',
         title: 'Service',
-        data: { heading: 'Service detail' },
-        loadComponent: () => import('./features/stub/stub.page').then((m) => m.StubPage),
+        loadComponent: () =>
+          import('./features/service-detail/service-detail.page').then((m) => m.ServiceDetailPage),
       },
       {
         path: 'rules',

@@ -1,6 +1,10 @@
 import { DEFAULT_APP_CONFIG } from '../config/app-config';
 import { ConnectionManager, ConnectionState } from './connection-manager';
-import { StreamTransport, TransportDefinition, TransportHandlers } from './transports/stream-transport';
+import {
+  StreamTransport,
+  TransportDefinition,
+  TransportHandlers,
+} from './transports/stream-transport';
 
 const CFG = DEFAULT_APP_CONFIG.stream;
 
@@ -51,7 +55,7 @@ const advance = (ms: number) => vi.advanceTimersByTimeAsync(ms);
 
 /** Time passes while the server keeps sending its 5 s pings on `transport`, as a healthy connection does. */
 async function advanceWithPings(transport: FakeTransport, ms: number) {
-  for (let left = ms; left > 0; ) {
+  for (let left = ms; left > 0;) {
     const step = Math.min(5000, left);
     await advance(step);
     transport.h.frame('{"type":"ping"}');

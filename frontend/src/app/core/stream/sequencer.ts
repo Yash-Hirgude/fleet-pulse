@@ -35,7 +35,13 @@ interface Buffered {
  * Events are handed to the sink strictly in offset order.
  */
 export class Sequencer {
-  readonly stats: SequencerStats = { received: 0, applied: 0, duplicates: 0, reordered: 0, overflows: 0 };
+  readonly stats: SequencerStats = {
+    received: 0,
+    applied: 0,
+    duplicates: 0,
+    reordered: 0,
+    overflows: 0,
+  };
   private expected: number | null = null;
   private readonly buffer = new Map<number, Buffered>();
 

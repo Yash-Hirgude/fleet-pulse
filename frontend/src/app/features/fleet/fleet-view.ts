@@ -26,8 +26,14 @@ export function parseQuery(params: {
   const sort = params.sort;
   return {
     q: params.q ?? DEFAULT_QUERY.q,
-    status: status && (METRIC_STATUSES as readonly string[]).includes(status) ? (status as MetricStatus) : 'all',
-    sort: sort && (SORT_KEYS as readonly string[]).includes(sort) ? (sort as SortKey) : DEFAULT_QUERY.sort,
+    status:
+      status && (METRIC_STATUSES as readonly string[]).includes(status)
+        ? (status as MetricStatus)
+        : 'all',
+    sort:
+      sort && (SORT_KEYS as readonly string[]).includes(sort)
+        ? (sort as SortKey)
+        : DEFAULT_QUERY.sort,
     dir: params.dir === 'desc' ? 'desc' : 'asc',
   };
 }
@@ -69,7 +75,10 @@ export function applyQuery(rows: readonly ServiceRow[], query: FleetQuery): Serv
   };
 
   if (query.sort === 'name') {
-    return filtered.sort((a, b) => sign * (a.nameKey < b.nameKey ? -1 : a.nameKey > b.nameKey ? 1 : a.id < b.id ? -1 : 1));
+    return filtered.sort(
+      (a, b) =>
+        sign * (a.nameKey < b.nameKey ? -1 : a.nameKey > b.nameKey ? 1 : a.id < b.id ? -1 : 1),
+    );
   }
   // read every value once, then sort by the cached numbers (not 2,000 * log(2,000) signal reads)
   const keyed = filtered.map((row) => ({ row, v: value(row) }));

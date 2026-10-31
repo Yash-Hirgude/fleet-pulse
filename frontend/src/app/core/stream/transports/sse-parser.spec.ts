@@ -9,7 +9,9 @@ function parse(...chunks: string[]): SseMessage[] {
 
 describe('SseParser', () => {
   it('parses id, event and data', () => {
-    expect(parse('id: 7\nevent: metric\ndata: {"a":1}\n\n')).toEqual([{ id: '7', event: 'metric', data: '{"a":1}' }]);
+    expect(parse('id: 7\nevent: metric\ndata: {"a":1}\n\n')).toEqual([
+      { id: '7', event: 'metric', data: '{"a":1}' },
+    ]);
   });
 
   it('handles chunks that split a line or a message anywhere', () => {
@@ -22,7 +24,9 @@ describe('SseParser', () => {
 
   it('ignores comments and keep-alives, joins multi-line data, tolerates CRLF', () => {
     expect(parse(': connected\n\n')).toEqual([]);
-    expect(parse('event: x\r\ndata: a\r\ndata: b\r\n\r\n')).toMatchObject([{ event: 'x', data: 'a\nb' }]);
+    expect(parse('event: x\r\ndata: a\r\ndata: b\r\n\r\n')).toMatchObject([
+      { event: 'x', data: 'a\nb' },
+    ]);
   });
 
   it('delivers invalid JSON payloads untouched (the stream parser counts them as malformed)', () => {

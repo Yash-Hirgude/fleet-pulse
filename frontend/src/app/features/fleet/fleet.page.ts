@@ -43,12 +43,23 @@ interface Column {
         <div class="controls">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Search</mat-label>
-            <input matInput type="search" #searchBox [value]="search()" (input)="onSearch(searchBox.value)" />
+            <input
+              matInput
+              type="search"
+              #searchBox
+              [value]="search()"
+              (input)="onSearch(searchBox.value)"
+            />
           </mat-form-field>
 
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Status</mat-label>
-            <select matNativeControl #statusBox [value]="query().status" (change)="setStatus(statusBox.value)">
+            <select
+              matNativeControl
+              #statusBox
+              [value]="query().status"
+              (change)="setStatus(statusBox.value)"
+            >
               <option value="all">All</option>
               <option value="healthy">Healthy</option>
               <option value="degraded">Degraded</option>
@@ -56,12 +67,15 @@ interface Column {
             </select>
           </mat-form-field>
 
-          <p class="controls__count">Showing {{ list().length }} of {{ stream.store.rows.length }} services</p>
+          <p class="controls__count">
+            Showing {{ list().length }} of {{ stream.store.rows.length }} services
+          </p>
         </div>
 
         @if (stream.isStale()) {
           <p class="stale" role="status">
-            Data is stale: no event for {{ stream.staleForSeconds() }} s. The numbers below may be out of date.
+            Data is stale: no event for {{ stream.staleForSeconds() }} s. The numbers below may be
+            out of date.
           </p>
         }
 
@@ -82,7 +96,12 @@ interface Column {
             <thead>
               <tr role="row" aria-rowindex="1">
                 @for (col of columns; track col.key) {
-                  <th role="columnheader" scope="col" [class.num]="col.numeric" [attr.aria-sort]="ariaSort(col.key)">
+                  <th
+                    role="columnheader"
+                    scope="col"
+                    [class.num]="col.numeric"
+                    [attr.aria-sort]="ariaSort(col.key)"
+                  >
                     <button type="button" class="th-btn" tabindex="-1" (click)="sortBy(col.key)">
                       {{ col.label }}
                       <span aria-hidden="true">{{ arrow(col.key) }}</span>
@@ -92,7 +111,9 @@ interface Column {
               </tr>
             </thead>
             <tbody>
-              <tr aria-hidden="true" class="spacer" [style.height.px]="topSpace()"><td colspan="5"></td></tr>
+              <tr aria-hidden="true" class="spacer" [style.height.px]="topSpace()">
+                <td colspan="5"></td>
+              </tr>
               @for (row of windowRows(); track row.id; let i = $index) {
                 @let m = row.metrics();
                 <tr
@@ -112,12 +133,16 @@ interface Column {
                   <td role="gridcell">
                     <!-- a new element per status change restarts the flash animation -->
                     @for (change of [m.statusChanges]; track change) {
-                      <span class="pill" [class.flash]="change > 0" [attr.data-status]="m.status">{{ m.status }}</span>
+                      <span class="pill" [class.flash]="change > 0" [attr.data-status]="m.status">{{
+                        m.status
+                      }}</span>
                     }
                   </td>
                 </tr>
               }
-              <tr aria-hidden="true" class="spacer" [style.height.px]="bottomSpace()"><td colspan="5"></td></tr>
+              <tr aria-hidden="true" class="spacer" [style.height.px]="bottomSpace()">
+                <td colspan="5"></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -176,17 +201,25 @@ export class FleetPage {
   private readonly scrollTop = signal(0);
   private readonly viewportHeight = signal(600);
   protected readonly startIndex = computed(() =>
-    Math.max(0, Math.floor(this.scrollTop() / this.cfg.tableRowHeightPx) - this.cfg.tableOverscanRows),
+    Math.max(
+      0,
+      Math.floor(this.scrollTop() / this.cfg.tableRowHeightPx) - this.cfg.tableOverscanRows,
+    ),
   );
   private readonly endIndex = computed(() =>
     Math.min(
       this.list().length,
-      Math.ceil((this.scrollTop() + this.viewportHeight()) / this.cfg.tableRowHeightPx) + this.cfg.tableOverscanRows,
+      Math.ceil((this.scrollTop() + this.viewportHeight()) / this.cfg.tableRowHeightPx) +
+        this.cfg.tableOverscanRows,
     ),
   );
-  protected readonly windowRows = computed(() => this.list().slice(this.startIndex(), this.endIndex()));
+  protected readonly windowRows = computed(() =>
+    this.list().slice(this.startIndex(), this.endIndex()),
+  );
   protected readonly topSpace = computed(() => this.startIndex() * this.cfg.tableRowHeightPx);
-  protected readonly bottomSpace = computed(() => (this.list().length - this.endIndex()) * this.cfg.tableRowHeightPx);
+  protected readonly bottomSpace = computed(
+    () => (this.list().length - this.endIndex()) * this.cfg.tableRowHeightPx,
+  );
 
   protected readonly activeId = signal<string | null>(null);
   protected readonly statEntries = computed(() => Object.entries(this.stream.stats()));
@@ -235,7 +268,10 @@ export class FleetPage {
   protected onSearch(value: string): void {
     this.search.set(value);
     if (this.searchTimer) clearTimeout(this.searchTimer);
-    this.searchTimer = setTimeout(() => this.writeUrl({ ...this.query(), q: value }), this.cfg.searchDebounceMs);
+    this.searchTimer = setTimeout(
+      () => this.writeUrl({ ...this.query(), q: value }),
+      this.cfg.searchDebounceMs,
+    );
   }
 
   protected setStatus(value: string): void {
@@ -317,7 +353,8 @@ export class FleetPage {
     const headerH = el.querySelector('thead')?.clientHeight ?? 0;
     const top = index * rowH;
     if (top < el.scrollTop) el.scrollTop = top;
-    else if (top + rowH + headerH > el.scrollTop + el.clientHeight) el.scrollTop = top + rowH + headerH - el.clientHeight;
+    else if (top + rowH + headerH > el.scrollTop + el.clientHeight)
+      el.scrollTop = top + rowH + headerH - el.clientHeight;
     this.scrollTop.set(el.scrollTop);
   }
 }

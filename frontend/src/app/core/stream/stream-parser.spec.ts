@@ -1,8 +1,15 @@
 import { parseFrame } from './stream-parser';
 
 const valid = {
-  type: 'metric', offset: 9182733, serviceId: 'svc-0412', seq: 18233, ts: 1791302400123,
-  p95: 182, errRate: 0.7, rps: 1340, status: 'degraded',
+  type: 'metric',
+  offset: 9182733,
+  serviceId: 'svc-0412',
+  seq: 18233,
+  ts: 1791302400123,
+  p95: 182,
+  errRate: 0.7,
+  rps: 1340,
+  status: 'degraded',
 };
 
 describe('parseFrame', () => {
@@ -11,7 +18,10 @@ describe('parseFrame', () => {
   });
 
   it('parses a ping', () => {
-    expect(parseFrame('{"type":"ping","ts":1791302400123}')).toEqual({ kind: 'ping', ts: 1791302400123 });
+    expect(parseFrame('{"type":"ping","ts":1791302400123}')).toEqual({
+      kind: 'ping',
+      ts: 1791302400123,
+    });
   });
 
   it('reports invalid JSON as malformed instead of throwing', () => {
@@ -30,9 +40,15 @@ describe('parseFrame', () => {
   );
 
   it('rejects wrong types and unknown values', () => {
-    expect(parseFrame(JSON.stringify({ ...valid, offset: '1' }))).toMatchObject({ kind: 'malformed' });
-    expect(parseFrame(JSON.stringify({ ...valid, p95: null }))).toMatchObject({ kind: 'malformed' });
-    expect(parseFrame(JSON.stringify({ ...valid, status: 'on-fire' }))).toMatchObject({ kind: 'malformed' });
+    expect(parseFrame(JSON.stringify({ ...valid, offset: '1' }))).toMatchObject({
+      kind: 'malformed',
+    });
+    expect(parseFrame(JSON.stringify({ ...valid, p95: null }))).toMatchObject({
+      kind: 'malformed',
+    });
+    expect(parseFrame(JSON.stringify({ ...valid, status: 'on-fire' }))).toMatchObject({
+      kind: 'malformed',
+    });
     expect(parseFrame('{"type":"mystery"}')).toMatchObject({ kind: 'malformed' });
   });
 });

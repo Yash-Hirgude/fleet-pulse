@@ -28,8 +28,19 @@ export interface StreamStats {
 }
 
 const EMPTY_STATS: StreamStats = {
-  received: 0, applied: 0, duplicates: 0, reordered: 0, malformed: 0, gapsDetected: 0, replays: 0,
-  snapshotReloads: 0, reconnects: 0, transportSwitches: 0, overflows: 0, staleSeq: 0, seqGaps: 0,
+  received: 0,
+  applied: 0,
+  duplicates: 0,
+  reordered: 0,
+  malformed: 0,
+  gapsDetected: 0,
+  replays: 0,
+  snapshotReloads: 0,
+  reconnects: 0,
+  transportSwitches: 0,
+  overflows: 0,
+  staleSeq: 0,
+  seqGaps: 0,
 };
 
 export type InitialLoad = 'idle' | 'loading' | 'ready' | 'error';
@@ -60,7 +71,8 @@ export class StreamService {
 
   /** No data event for longer than `freshness.staleAfterMs`: everything on screen must be marked stale. */
   readonly isStale = computed(
-    () => this.lastEventAt() > 0 && this.now() - this.lastEventAt() > this.cfg.freshness.staleAfterMs,
+    () =>
+      this.lastEventAt() > 0 && this.now() - this.lastEventAt() > this.cfg.freshness.staleAfterMs,
   );
   readonly staleForSeconds = computed(() => Math.floor((this.now() - this.lastEventAt()) / 1000));
 
@@ -105,7 +117,11 @@ export class StreamService {
         snapshot: (snapshot) => this.onPolledSnapshot(snapshot),
         connected: (kind) => this.onConnected(kind),
         state: (state) => this.connection.set(state),
-        unauthorized: () => firstValueFrom(this.auth.refresh()).then(() => true, () => false),
+        unauthorized: () =>
+          firstValueFrom(this.auth.refresh()).then(
+            () => true,
+            () => false,
+          ),
       },
     });
 
@@ -145,7 +161,13 @@ export class StreamService {
     this.initialLoad.set('idle');
     this.lastEventAt.set(0);
     this.stats.set(EMPTY_STATS);
-    this.malformed = this.gapsDetected = this.replays = this.snapshotReloads = this.reconnects = this.transportSwitches = 0;
+    this.malformed =
+      this.gapsDetected =
+      this.replays =
+      this.snapshotReloads =
+      this.reconnects =
+      this.transportSwitches =
+        0;
     this.lastKind = null;
     this.connectedBefore = false;
     this.recovering = false;
@@ -197,7 +219,8 @@ export class StreamService {
   private onPolledSnapshot(snapshot: MetricsSnapshot): void {
     if (this.initialLoad() !== 'ready') return;
     this.store.applySnapshot(snapshot);
-    if (snapshot.offset > (this.sequencer?.lastAppliedOffset ?? -1)) this.sequencer?.baseline(snapshot.offset);
+    if (snapshot.offset > (this.sequencer?.lastAppliedOffset ?? -1))
+      this.sequencer?.baseline(snapshot.offset);
   }
 
   private onConnected(kind: string): void {
@@ -281,6 +304,7 @@ export class StreamService {
       seqGaps: this.store.counters.seqGaps,
     };
     const prev = this.stats();
-    if ((Object.keys(next) as (keyof StreamStats)[]).some((k) => next[k] !== prev[k])) this.stats.set(next);
+    if ((Object.keys(next) as (keyof StreamStats)[]).some((k) => next[k] !== prev[k]))
+      this.stats.set(next);
   }
 }

@@ -2,7 +2,15 @@ import { Sequencer } from './sequencer';
 import { MetricEvent } from './stream.models';
 
 const ev = (offset: number, serviceId = 'svc-0001', seq = offset): MetricEvent => ({
-  type: 'metric', offset, serviceId, seq, ts: 0, p95: 1, errRate: 0, rps: 1, status: 'healthy',
+  type: 'metric',
+  offset,
+  serviceId,
+  seq,
+  ts: 0,
+  p95: 1,
+  errRate: 0,
+  rps: 1,
+  status: 'healthy',
 });
 
 describe('Sequencer', () => {
@@ -76,7 +84,9 @@ describe('Sequencer', () => {
   });
 
   it('holds events that arrive before the first baseline and drains the newer ones after it', () => {
-    const fresh = new Sequencer({ reorderWindowMs: 1000, maxBuffered: 50, now: () => now }, (e) => applied.push(e.offset));
+    const fresh = new Sequencer({ reorderWindowMs: 1000, maxBuffered: 50, now: () => now }, (e) =>
+      applied.push(e.offset),
+    );
     applied = [];
     [5, 6, 7].forEach((o) => fresh.push(ev(o)));
     expect(applied).toEqual([]);
