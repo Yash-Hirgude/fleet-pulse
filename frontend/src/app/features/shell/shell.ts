@@ -1,13 +1,22 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
+import { StreamService } from '../../core/stream/stream.service';
+import { ConnectionStatus } from './connection-status';
 
 @Component({
   selector: 'fp-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatToolbarModule, MatButtonModule],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatToolbarModule,
+    MatButtonModule,
+    ConnectionStatus,
+  ],
   styleUrl: './shell.scss',
   template: `
     <mat-toolbar class="toolbar">
@@ -20,7 +29,7 @@ import { AuthService } from '../../core/auth/auth.service';
         <a mat-button routerLink="/settings" routerLinkActive="is-active">Settings</a>
       </nav>
       <span class="toolbar__spacer"></span>
-      <!-- connection status indicator is added with the stream engine -->
+      <fp-connection-status />
       <span class="toolbar__user">{{ auth.user()?.email }} ({{ auth.role() }})</span>
       <button mat-stroked-button type="button" (click)="auth.logout()">Sign out</button>
     </mat-toolbar>
@@ -29,4 +38,11 @@ import { AuthService } from '../../core/auth/auth.service';
 })
 export class Shell {
   protected readonly auth = inject(AuthService);
+
+  constructor() {
+    // The stream lives exactly as long as the signed-in shell does.
+    const stream = inject(StreamService);
+    stream.start();
+    inject(DestroyRef).onDestroy(() => stream.stop());
+  }
 }

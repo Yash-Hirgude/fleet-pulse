@@ -1,0 +1,43 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+
+  &__dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &[data-tone='ok'] {
+    color: #4caf50;
+  }
+
+  &[data-tone='warn'] {
+    color: #ffb300;
+  }
+
+  &[data-tone='bad'] {
+    color: #ef5350;
+  }
+
+  &[data-tone='idle'] {
+    color: inherit;
+    opacity: 0.7;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
