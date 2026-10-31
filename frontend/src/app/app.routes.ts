@@ -17,8 +17,7 @@ export const routes: Routes = [
       {
         path: 'fleet',
         title: 'Fleet',
-        data: { heading: 'Fleet', probe: '/services' },
-        loadComponent: () => import('./features/stub/stub.page').then((m) => m.StubPage),
+        loadComponent: () => import('./features/fleet/fleet.page').then((m) => m.FleetPage),
       },
       {
         path: 'services/:id',

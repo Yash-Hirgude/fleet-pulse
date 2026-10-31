@@ -14,14 +14,18 @@ export interface AppConfig {
     readonly retryMaxDelayMs: number;
   };
   readonly stream: {
-    readonly wsConnectTimeoutMs: number;
+    readonly connectTimeoutMs: number;
     readonly failuresBeforeFallback: number;
     readonly climbBackIntervalMs: number;
     readonly backoff: { readonly baseMs: number; readonly maxMs: number };
     readonly pingIntervalMs: number;
     readonly missedPingsLimit: number;
+    readonly heartbeatGraceMs: number;
     readonly pollingIntervalMs: number;
     readonly reorderWindowMs: number;
+    readonly maxBufferedEvents: number;
+    readonly gapCheckIntervalMs: number;
+    readonly replayCooldownMs: number;
   };
   readonly freshness: { readonly staleAfterMs: number };
   readonly ui: {
@@ -29,6 +33,8 @@ export interface AppConfig {
     readonly tableRowHeightPx: number;
     readonly chartMaxPoints: number;
     readonly chartHistoryMinutes: number;
+    readonly searchDebounceMs: number;
+    readonly tableOverscanRows: number;
   };
 }
 
@@ -42,14 +48,18 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
     retryMaxDelayMs: 30_000,
   },
   stream: {
-    wsConnectTimeoutMs: 5_000,
+    connectTimeoutMs: 5_000,
     failuresBeforeFallback: 3,
     climbBackIntervalMs: 30_000,
     backoff: { baseMs: 1_000, maxMs: 30_000 },
     pingIntervalMs: 5_000,
     missedPingsLimit: 2,
+    heartbeatGraceMs: 500,
     pollingIntervalMs: 2_000,
     reorderWindowMs: 1_000,
+    maxBufferedEvents: 20_000,
+    gapCheckIntervalMs: 250,
+    replayCooldownMs: 1_000,
   },
   freshness: { staleAfterMs: 10_000 },
   ui: {
@@ -57,6 +67,8 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
     tableRowHeightPx: 40,
     chartMaxPoints: 300,
     chartHistoryMinutes: 15,
+    searchDebounceMs: 200,
+    tableOverscanRows: 8,
   },
 };
 
