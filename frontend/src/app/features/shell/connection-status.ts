@@ -34,14 +34,22 @@ export class ConnectionStatus {
         return { label: 'Offline', announcement: 'Offline', tone: 'bad' };
       case 'reconnecting': {
         const seconds = Math.max(0, Math.ceil((state.retryAt - now) / 1000));
-        return { label: `Reconnecting in ${seconds} s`, announcement: 'Reconnecting', tone: 'warn' };
+        return {
+          label: `Reconnecting in ${seconds} s`,
+          announcement: 'Reconnecting',
+          tone: 'warn',
+        };
       }
       case 'connecting':
         return { label: 'Connecting…', announcement: 'Connecting', tone: 'idle' };
       case 'live': {
         if (this.stream.isStale()) {
           const seconds = this.stream.staleForSeconds();
-          return { label: `Stale: last event ${seconds} s ago`, announcement: 'Data is stale', tone: 'warn' };
+          return {
+            label: `Stale: last event ${seconds} s ago`,
+            announcement: 'Data is stale',
+            tone: 'warn',
+          };
         }
         const label = this.stream.transportLabel(state.transport);
         return { label, announcement: label, tone: state.transport === 'polling' ? 'warn' : 'ok' };

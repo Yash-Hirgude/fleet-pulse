@@ -22,7 +22,8 @@ export class SseParser {
 
   private line(line: string): void {
     if (line === '') {
-      if (this.data.length > 0) this.onMessage({ event: this.event || 'message', data: this.data.join('\n'), id: this.id });
+      if (this.data.length > 0)
+        this.onMessage({ event: this.event || 'message', data: this.data.join('\n'), id: this.id });
       this.event = '';
       this.data = [];
       return;

@@ -20,7 +20,8 @@ export function parseFrame(raw: string): ParsedFrame {
   if (typeof value !== 'object' || value === null) return malformed('not an object');
   const o = value as Record<string, unknown>;
 
-  if (o['type'] === 'ping') return isNum(o['ts']) ? { kind: 'ping', ts: o['ts'] } : malformed('ping without ts');
+  if (o['type'] === 'ping')
+    return isNum(o['ts']) ? { kind: 'ping', ts: o['ts'] } : malformed('ping without ts');
   if (o['type'] !== 'metric') return malformed('unknown type');
 
   const { offset, serviceId, seq, ts, p95, errRate, rps, status } = o;
@@ -34,6 +35,16 @@ export function parseFrame(raw: string): ParsedFrame {
   }
   return {
     kind: 'metric',
-    event: { type: 'metric', offset, serviceId, seq, ts, p95, errRate, rps, status: status as MetricStatus },
+    event: {
+      type: 'metric',
+      offset,
+      serviceId,
+      seq,
+      ts,
+      p95,
+      errRate,
+      rps,
+      status: status as MetricStatus,
+    },
   };
 }

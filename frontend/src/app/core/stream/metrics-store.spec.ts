@@ -6,9 +6,22 @@ const services: ServiceInfo[] = [
   { id: 'svc-0002', name: 'auth-cache', team: 'auth', status: 'healthy' },
 ];
 const ev = (serviceId: string, seq: number, over: Partial<MetricEvent> = {}): MetricEvent => ({
-  type: 'metric', offset: seq, serviceId, seq, ts: seq, p95: 100, errRate: 0.5, rps: 10, status: 'healthy', ...over,
+  type: 'metric',
+  offset: seq,
+  serviceId,
+  seq,
+  ts: seq,
+  p95: 100,
+  errRate: 0.5,
+  rps: 10,
+  status: 'healthy',
+  ...over,
 });
-const snapshot: MetricsSnapshot = { offset: 10, ts: 0, metrics: [ev('svc-0001', 5), ev('svc-0002', 7)] };
+const snapshot: MetricsSnapshot = {
+  offset: 10,
+  ts: 0,
+  metrics: [ev('svc-0001', 5), ev('svc-0002', 7)],
+};
 
 describe('MetricsStore', () => {
   let store: MetricsStore;
@@ -51,7 +64,11 @@ describe('MetricsStore', () => {
   });
 
   it('applies only newer values from a later snapshot', () => {
-    store.applySnapshot({ offset: 20, ts: 0, metrics: [ev('svc-0001', 5, { p95: 1 }), ev('svc-0002', 12, { p95: 999 })] });
+    store.applySnapshot({
+      offset: 20,
+      ts: 0,
+      metrics: [ev('svc-0001', 5, { p95: 1 }), ev('svc-0002', 12, { p95: 999 })],
+    });
     store.flush();
     expect(store.row('svc-0001')?.metrics().p95).toBe(100);
     expect(store.row('svc-0002')?.metrics().p95).toBe(999);

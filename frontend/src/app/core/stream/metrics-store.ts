@@ -40,7 +40,14 @@ export interface StoreCounters {
 
 export type MetricListener = (event: MetricEvent) => void;
 
-const EMPTY: ServiceMetrics = { p95: 0, errRate: 0, rps: 0, status: 'healthy', ts: 0, statusChanges: 0 };
+const EMPTY: ServiceMetrics = {
+  p95: 0,
+  errRate: 0,
+  rps: 0,
+  status: 'healthy',
+  ts: 0,
+  statusChanges: 0,
+};
 
 /**
  * Latest metrics per service. The stream writes into `pending` for every event; `flush()` publishes the latest
@@ -75,7 +82,12 @@ export class MetricsStore {
     this.pending.clear();
     this.rows = services.map((s) => {
       const m = latest.get(s.id);
-      const row = new ServiceRow(s.id, s.name, s.team, m ? toMetrics(m, 0) : { ...EMPTY, status: s.status });
+      const row = new ServiceRow(
+        s.id,
+        s.name,
+        s.team,
+        m ? toMetrics(m, 0) : { ...EMPTY, status: s.status },
+      );
       row.lastSeq = m?.seq ?? 0;
       return row;
     });
@@ -118,7 +130,12 @@ export class MetricsStore {
     if (changed === 0) return 0;
     for (const [id, event] of this.pending) {
       const row = this.byId.get(id);
-      row?.metrics.update((prev) => toMetrics(event, prev.status !== event.status ? prev.statusChanges + 1 : prev.statusChanges));
+      row?.metrics.update((prev) =>
+        toMetrics(
+          event,
+          prev.status !== event.status ? prev.statusChanges + 1 : prev.statusChanges,
+        ),
+      );
     }
     this.pending.clear();
     this.version.update((v) => v + 1);

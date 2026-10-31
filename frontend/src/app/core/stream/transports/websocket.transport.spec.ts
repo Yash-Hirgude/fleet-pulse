@@ -15,11 +15,21 @@ class FakeSocket {
 
 function setup(token: string | null = 'tok en') {
   const socket: { current?: FakeSocket } = {};
-  const handlers: TransportHandlers = { opened: vi.fn(), frame: vi.fn(), snapshot: vi.fn(), closed: vi.fn() };
-  const transport = new WebSocketTransport('ws://x', () => token, handlers, (url) => {
-    socket.current = new FakeSocket(url);
-    return socket.current as unknown as WebSocket;
-  });
+  const handlers: TransportHandlers = {
+    opened: vi.fn(),
+    frame: vi.fn(),
+    snapshot: vi.fn(),
+    closed: vi.fn(),
+  };
+  const transport = new WebSocketTransport(
+    'ws://x',
+    () => token,
+    handlers,
+    (url) => {
+      socket.current = new FakeSocket(url);
+      return socket.current as unknown as WebSocket;
+    },
+  );
   return { transport, handlers, socket };
 }
 

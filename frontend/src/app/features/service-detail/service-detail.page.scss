@@ -1,0 +1,57 @@
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+
+  h1 {
+    margin: 0;
+  }
+
+  &__id {
+    opacity: 0.7;
+  }
+}
+
+.pill {
+  padding: 0.1rem 0.7rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.8rem;
+
+  &[data-status='healthy'] {
+    color: #4caf50;
+  }
+
+  &[data-status='degraded'] {
+    color: #ffb300;
+  }
+
+  &[data-status='down'] {
+    color: #ef5350;
+  }
+}
+
+.stale {
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid #ffb300;
+  background: color-mix(in srgb, #ffb300 15%, transparent);
+}
+
+.charts {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.panel-error {
+  padding: 1rem;
+  border: 1px solid var(--mat-sys-error);
+  border-radius: 8px;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}

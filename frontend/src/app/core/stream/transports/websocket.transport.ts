@@ -19,7 +19,9 @@ export class WebSocketTransport implements StreamTransport {
       return;
     }
     // Browsers cannot set headers on a WebSocket, so the contract allows the token as a query parameter.
-    const socket = this.createSocket(`${this.wsUrl}/stream?access_token=${encodeURIComponent(token)}`);
+    const socket = this.createSocket(
+      `${this.wsUrl}/stream?access_token=${encodeURIComponent(token)}`,
+    );
     this.socket = socket;
     let opened = false;
     socket.onopen = () => {
@@ -34,7 +36,8 @@ export class WebSocketTransport implements StreamTransport {
     socket.onmessage = (ev) => {
       if (typeof ev.data === 'string') this.handlers.frame(ev.data);
     };
-    socket.onclose = (ev) => this.handlers.closed(ev.code === CLOSE_UNAUTHORIZED ? 'unauthorized' : 'closed');
+    socket.onclose = (ev) =>
+      this.handlers.closed(ev.code === CLOSE_UNAUTHORIZED ? 'unauthorized' : 'closed');
   }
 
   close(): void {

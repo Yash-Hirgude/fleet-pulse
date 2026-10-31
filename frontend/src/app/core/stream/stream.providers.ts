@@ -53,7 +53,11 @@ export function provideStreamTransports(): Provider[] {
           label: 'Polling',
           heartbeat: false,
           create: (h) =>
-            new PollingTransport(() => api.get<MetricsSnapshot>('/metrics/snapshot'), cfg.stream.pollingIntervalMs, h),
+            new PollingTransport(
+              () => api.get<MetricsSnapshot>('/metrics/snapshot'),
+              cfg.stream.pollingIntervalMs,
+              h,
+            ),
         };
       },
     },

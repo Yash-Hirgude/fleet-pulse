@@ -5,18 +5,40 @@ import { provideRouter } from '@angular/router';
 import { DEFAULT_APP_CONFIG } from '../config/app-config';
 import { MetricEvent, MetricsSnapshot, ServiceInfo } from './stream.models';
 import { StreamService } from './stream.service';
-import { STREAM_TRANSPORTS, StreamTransport, TransportHandlers } from './transports/stream-transport';
+import {
+  STREAM_TRANSPORTS,
+  StreamTransport,
+  TransportHandlers,
+} from './transports/stream-transport';
 
 const BASE = DEFAULT_APP_CONFIG.api.baseUrl;
 const services: ServiceInfo[] = [
   { id: 'svc-0001', name: 'payments-api', team: 'payments', status: 'healthy' },
   { id: 'svc-0002', name: 'auth-cache', team: 'auth', status: 'healthy' },
 ];
-const ev = (offset: number, serviceId: string, seq: number, over: Partial<MetricEvent> = {}): MetricEvent => ({
-  type: 'metric', offset, serviceId, seq, ts: offset, p95: 100, errRate: 0.5, rps: 10, status: 'healthy', ...over,
+const ev = (
+  offset: number,
+  serviceId: string,
+  seq: number,
+  over: Partial<MetricEvent> = {},
+): MetricEvent => ({
+  type: 'metric',
+  offset,
+  serviceId,
+  seq,
+  ts: offset,
+  p95: 100,
+  errRate: 0.5,
+  rps: 10,
+  status: 'healthy',
+  ...over,
 });
 const frame = (e: MetricEvent) => JSON.stringify(e);
-const snapshotAt = (offset: number, metrics: MetricEvent[]): MetricsSnapshot => ({ offset, ts: 0, metrics });
+const snapshotAt = (offset: number, metrics: MetricEvent[]): MetricsSnapshot => ({
+  offset,
+  ts: 0,
+  metrics,
+});
 
 class FakeTransport implements StreamTransport {
   constructor(readonly h: TransportHandlers) {}
@@ -119,7 +141,10 @@ describe('StreamService', () => {
 
     await vi.advanceTimersByTimeAsync(1000);
     const replay = ctrl.expectOne(`${BASE}/metrics/replay?since=11`);
-    replay.flush({ events: [ev(12, 'svc-0001', 7), ev(13, 'svc-0001', 8, { p95: 888 })], offset: 13 });
+    replay.flush({
+      events: [ev(12, 'svc-0001', 7), ev(13, 'svc-0001', 8, { p95: 888 })],
+      offset: 13,
+    });
     await flush();
 
     expect(stream.stats().gapsDetected).toBe(1);
@@ -152,8 +177,13 @@ describe('StreamService', () => {
 
     ctrl
       .expectOne(`${BASE}/metrics/replay?since=10`)
-      .flush({ error: { code: 'replay_too_old', message: 'too old', details: [] } }, { status: 410, statusText: 'Gone' });
-    ctrl.expectOne(`${BASE}/metrics/snapshot`).flush(snapshotAt(5000, [ev(5000, 'svc-0001', 400, { p95: 4242 })]));
+      .flush(
+        { error: { code: 'replay_too_old', message: 'too old', details: [] } },
+        { status: 410, statusText: 'Gone' },
+      );
+    ctrl
+      .expectOne(`${BASE}/metrics/snapshot`)
+      .flush(snapshotAt(5000, [ev(5000, 'svc-0001', 400, { p95: 4242 })]));
     await flush();
 
     expect(stream.stats().snapshotReloads).toBe(1);

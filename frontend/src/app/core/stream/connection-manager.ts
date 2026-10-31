@@ -1,7 +1,12 @@
 import { AppConfig } from '../config/app-config';
 import { backoffDelayMs } from './backoff';
 import { MetricsSnapshot } from './stream.models';
-import { CloseReason, StreamTransport, TransportDefinition, TransportHandlers } from './transports/stream-transport';
+import {
+  CloseReason,
+  StreamTransport,
+  TransportDefinition,
+  TransportHandlers,
+} from './transports/stream-transport';
 
 export type ConnectionState =
   | { readonly status: 'stopped' }
@@ -204,7 +209,11 @@ export class ConnectionManager {
       return;
     }
     const delay = backoffDelayMs(this.failures, this.cfg.backoff, this.random);
-    this.emit({ status: 'reconnecting', transport: this.kindOf(this.index), retryAt: this.now() + delay });
+    this.emit({
+      status: 'reconnecting',
+      transport: this.kindOf(this.index),
+      retryAt: this.now() + delay,
+    });
     this.retryTimer = setTimeout(() => this.connect(), delay);
   }
 
@@ -213,7 +222,8 @@ export class ConnectionManager {
   private startHeartbeat(): void {
     this.stopHeartbeat();
     if (!this.opts.transports[this.index].heartbeat) return;
-    const deadAfterMs = this.cfg.pingIntervalMs * this.cfg.missedPingsLimit + this.cfg.heartbeatGraceMs;
+    const deadAfterMs =
+      this.cfg.pingIntervalMs * this.cfg.missedPingsLimit + this.cfg.heartbeatGraceMs;
     // one cheap check per second instead of re-arming a timer for every frame (up to 2,000 a second)
     this.heartbeatTimer = setInterval(() => {
       if (this.now() - this.lastFrameAt > deadAfterMs) this.fail('error');
