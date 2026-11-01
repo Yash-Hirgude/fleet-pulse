@@ -35,6 +35,10 @@ export interface AppConfig {
     readonly chartHistoryMinutes: number;
     readonly searchDebounceMs: number;
     readonly tableOverscanRows: number;
+    readonly nameCheckDebounceMs: number;
+    readonly maxIncidents: number;
+    readonly notificationBatchMs: number;
+    readonly defaultNotificationSeconds: number;
   };
 }
 
@@ -69,6 +73,10 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
     chartHistoryMinutes: 15,
     searchDebounceMs: 200,
     tableOverscanRows: 8,
+    nameCheckDebounceMs: 300,
+    maxIncidents: 200,
+    notificationBatchMs: 1_000,
+    defaultNotificationSeconds: 6,
   },
 };
 

@@ -2,9 +2,12 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RuleEvaluator } from '../../core/alerts/rule-evaluator';
 import { AuthService } from '../../core/auth/auth.service';
+import { RulesStore } from '../../core/rules/rules.store';
 import { StreamService } from '../../core/stream/stream.service';
 import { ConnectionStatus } from './connection-status';
+import { IncidentPanel } from './incident-panel';
 
 @Component({
   selector: 'fp-shell',
@@ -16,6 +19,7 @@ import { ConnectionStatus } from './connection-status';
     MatToolbarModule,
     MatButtonModule,
     ConnectionStatus,
+    IncidentPanel,
   ],
   styleUrl: './shell.scss',
   template: `
@@ -30,19 +34,45 @@ import { ConnectionStatus } from './connection-status';
       </nav>
       <span class="toolbar__spacer"></span>
       <fp-connection-status />
+      <button
+        mat-stroked-button
+        type="button"
+        class="toolbar__incidents"
+        aria-controls="incident-panel"
+        [attr.aria-expanded]="evaluator.panelOpen()"
+        (click)="evaluator.panelOpen.set(!evaluator.panelOpen())"
+      >
+        Incidents
+        @if (evaluator.openCount() > 0) {
+          <span class="toolbar__badge" [attr.aria-label]="evaluator.openCount() + ' open'">{{
+            evaluator.openCount()
+          }}</span>
+        }
+      </button>
       <span class="toolbar__user">{{ auth.user()?.email }} ({{ auth.role() }})</span>
       <button mat-stroked-button type="button" (click)="auth.logout()">Sign out</button>
     </mat-toolbar>
     <main class="content"><router-outlet /></main>
+    @if (evaluator.panelOpen()) {
+      <fp-incident-panel id="incident-panel" />
+    }
   `,
 })
 export class Shell {
   protected readonly auth = inject(AuthService);
+  protected readonly evaluator = inject(RuleEvaluator);
 
   constructor() {
-    // The stream lives exactly as long as the signed-in shell does.
+    // The stream, the rules and the alert evaluation live exactly as long as the signed-in shell does.
     const stream = inject(StreamService);
+    const rules = inject(RulesStore);
     stream.start();
-    inject(DestroyRef).onDestroy(() => stream.stop());
+    rules.load();
+    this.evaluator.start();
+    inject(DestroyRef).onDestroy(() => {
+      this.evaluator.stop();
+      rules.reset();
+      stream.stop();
+    });
   }
 }

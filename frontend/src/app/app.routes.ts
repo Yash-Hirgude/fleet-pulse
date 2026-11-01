@@ -13,7 +13,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/shell/shell').then((m) => m.Shell),
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'fleet' },
-      // Stub pages until the real features land. They already exercise auth, guards and the HTTP stack.
       {
         path: 'fleet',
         title: 'Fleet',
@@ -27,16 +26,14 @@ export const routes: Routes = [
       },
       {
         path: 'rules',
-        title: 'Rules',
-        canActivate: [roleGuard('operator')],
-        data: { heading: 'Alert rules', probe: '/rules' },
-        loadComponent: () => import('./features/stub/stub.page').then((m) => m.StubPage),
+        canActivate: [roleGuard('operator')], // enforced on the route itself, not only by hiding the link
+        loadChildren: () => import('./features/rules/rules.routes').then((m) => m.RULES_ROUTES),
       },
       {
         path: 'settings',
         title: 'Settings',
-        data: { heading: 'Settings' },
-        loadComponent: () => import('./features/stub/stub.page').then((m) => m.StubPage),
+        loadComponent: () =>
+          import('./features/settings/settings.page').then((m) => m.SettingsPage),
       },
     ],
   },
